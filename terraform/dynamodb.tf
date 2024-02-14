@@ -1,3 +1,4 @@
+// 建立这张表
 resource "aws_dynamodb_table" "websocket_table" {
     name = var.websocket_table_name
     read_capacity = 10
