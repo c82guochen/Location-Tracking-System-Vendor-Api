@@ -167,12 +167,97 @@ export const dynamoDbRemoveConnection = async (
   }
 };
 
-const execRemoveConnection = async () => {
-  const res = await dynamoDbRemoveConnection(
-    'websocket-connections',
-    '123'
-  );
-  console.log(res);
-};
+// const execRemoveConnection = async () => {
+//   const res = await dynamoDbRemoveConnection(
+//     'websocket-connections',
+//     '123'
+//   );
+//   console.log(res);
+// };
 
-execRemoveConnection();
+// execRemoveConnection();
+
+export const sqsDeleteMessage = async (
+    queueUrl: string,
+    receiptHandle: string
+  ) => {
+    try {
+      const params: AWS.SQS.DeleteMessageRequest = {
+        ReceiptHandle: receiptHandle,
+        QueueUrl: queueUrl,
+      };
+  
+      const res = await sqs.deleteMessage(params).promise();
+      console.log('Message deleted!');
+      return res;
+    } catch (e) {
+      if (e instanceof Error) {
+        return e;
+      }
+  
+      return new Error(`sqsDeleteMessage error object unknown type`);
+    }
+  };
+  
+//   const execSqsDeleteMessage = async () => {
+//     const receiptHandle =
+//       'AQEBKnzjRVW5/37bFxoYetkf9Tr89s+Lfw/nj/IexuKqdjfqkQ66M3SC2mjT04FfZfkZFw/dMBCOg2l+ARatg+KKSPK+00ji0CxJ6Gwc/K2vp98w4dulehhp/iDyhxXCW/y/SLwYmn8r9+XKcXRKiJ5xReHx9sjVCKaN+Jjis45SuIzDADZEO4w8EaVA+tDCnstv+jj0+n63vmAKzTyjPhY6YLeJ33jKYpQ2HsL6bu1leUG+P/3D0XghTcVgvBW5wEhDlzkWQEfjqfFGMuurCFrzFK1L2FekGdF6dVRgcVxhgzOjiMBEf4EhsUHj09YwGMFoyLnH/pIzuUr7+j1H9/uk6mJ5wtkuM/lWuc35CWncB32+/UwNXPPgfPbggf9QLq7y30NubnLrrm4gfEo1QfQJxw==';
+//     const res = await sqsDeleteMessage(
+//       'https://sqs.us-east-1.amazonaws.com/656203730697/vendor-twitter-queue',
+//       receiptHandle
+//     );
+//     console.log(res);
+//   };
+  
+//   execSqsDeleteMessage();
+
+// Broadcast Message
+interface BroadcastMessageWebsocketProps {
+  apiGateway: AWS.ApiGatewayManagementApi;
+  connections: any[];
+  message: string;
+  tableName: string;
+}
+
+export const broadcastMessageWebsocket = async (
+  props: BroadcastMessageWebsocketProps
+) => {
+  const { apiGateway, connections, message, tableName } = props;
+  const sendVendorsCall = connections?.map(async (connection) => {
+    const { connectionId } = connection;
+    try {
+      await apiGateway
+        .postToConnection({
+          ConnectionId: connectionId,
+          Data: message,
+        })
+        .promise();
+    } catch (e) {
+      if ((e as any).statusCode === 410) {
+        // stale connection
+        console.log(`delete stale connection: ${connectionId}`);
+        const removeConnRes = await dynamoDbRemoveConnection(
+          tableName,
+          connectionId
+        );
+        if (removeConnRes instanceof Error) {
+          return e;
+        }
+      } else {
+        return e;
+      }
+    }
+  });
+
+  try {
+    const res = await Promise.all(sendVendorsCall);
+    return res;
+  } catch (e) {
+    if (e instanceof Error) {
+      return e;
+    }
+    return new Error(
+      `broadcastMessageWebsocket error object unknown type`
+    );
+  }
+};
