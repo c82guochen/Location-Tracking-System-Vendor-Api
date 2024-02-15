@@ -212,8 +212,9 @@ export const sqsDeleteMessage = async (
 //   execSqsDeleteMessage();
 
 // Broadcast Message
+// broadcast 所需的四个参数
 interface BroadcastMessageWebsocketProps {
-  apiGateway: AWS.ApiGatewayManagementApi;
+  apiGateway: AWS.ApiGatewayManagementApi; //aws提供的固定参数
   connections: any[];
   message: string;
   tableName: string;
@@ -236,6 +237,7 @@ export const broadcastMessageWebsocket = async (
       if ((e as any).statusCode === 410) {
         // stale connection
         console.log(`delete stale connection: ${connectionId}`);
+        // 如果该connection Id不活跃的话就直接删掉
         const removeConnRes = await dynamoDbRemoveConnection(
           tableName,
           connectionId
@@ -250,7 +252,15 @@ export const broadcastMessageWebsocket = async (
   });
 
   try {
+    // 关于peomise的三种状态：.then{} - result/success情况
+    //                      .catch{} - reject情况
+    //                       pending状态，不可见
+    // Promise.all()是由promise object形成的array，也有三个状态
+    // 其中所有promise的状态都是result的时候它状态为result
+    // 只要有一个promise的状态是reject，那整个都是reject
     const res = await Promise.all(sendVendorsCall);
+    // 意味着所有的web socket都被connect到了，任意一个失败了broadcast就失败了
+    // tips:存在Promise.race和Promise.all完全相反：状态为result if one of the promises is result
     return res;
   } catch (e) {
     if (e instanceof Error) {

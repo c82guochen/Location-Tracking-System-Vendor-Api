@@ -2,7 +2,7 @@ name: 'Terraform action'
 on:
   push:
     branches:
-      - 4_remove_message
+      - 5_broadcast_message
   pull_request:
 permissions:
   id-token: write # This is required for aws oidc connections (Try 4)
