@@ -56,7 +56,8 @@ export const dynamodbScanTable = async function* (
 
       lastEvaluatedKey = (result as AWS.DynamoDB.ScanOutput)
         .LastEvaluatedKey;
-        result.Items = result.Items?.map((item) => item);
+      result.Items = result.Items?.map((item) => item);
+      //感觉这一行有点疑问？
       yield result;
     } catch (e) {
       if (e instanceof Error) {
