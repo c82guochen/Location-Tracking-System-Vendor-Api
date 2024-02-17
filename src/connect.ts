@@ -4,7 +4,7 @@ import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda';
 // APIGatewayEvent 和 APIGatewayProxyResult 是 AWS Lambda 与 API Gateway 集成时用于类型定义的 TypeScript 接口。
 import { dynamoDbAddConnection } from './aws';
 
-// 函数名为handler
+// 函数名为handler（注意lambda函数结构：接受事件对象，返回相应的Promise）
 export const handler = async (
   event: APIGatewayEvent
 ): Promise<APIGatewayProxyResult> => {
