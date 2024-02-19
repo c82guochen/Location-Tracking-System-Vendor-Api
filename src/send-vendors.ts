@@ -14,7 +14,7 @@ export const handler = async (
 
   const sqsUrl =
     process.env.AWS_SQS_URL ??
-    'https://sqs.us-east-1.amazonaws.com/525480118775/vender-twitter-queue';
+    'https://sqs.us-east-1.amazonaws.com/656203730697/vendor-twitter-queue';
 
   // Web Socket url会在把docker放到ECR上之后出现
   const websocketUrl = process.env.AWS_WEBSOCKET_URL ?? ''; // will build our websocket on AWS later

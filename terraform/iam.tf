@@ -32,6 +32,8 @@ data "aws_iam_policy_document" "lambda_ws" {
       effect = "Allow"
       actions = [
         "execute-api:ManageConnections",
+        # 在使用 Terraform 定义 AWS 资源时，如果你的 Lambda 函数需要与通过 API Gateway 建立的 WebSocket 连接交互，
+        # 你需要确保 Lambda 函数的执行角色（aws_iam_role）具有这个权限。这样，Lambda 函数就能够响应连接请求、断开连接请求，并且向连接的客户端发送消息。
         "dynamodb:PutItem",
         "dynamodb:DeleteItem",
         "dynamodb:GetItem",

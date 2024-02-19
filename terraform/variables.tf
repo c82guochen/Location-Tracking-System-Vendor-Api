@@ -26,6 +26,8 @@ variable "vendor_table_name" {
   default = "vendors"
 }
 
-variable "image_tag" {}
+variable "image_tag" {
+  # 会被ecr generate出来
+}
 
 variable "aws_region" {}
