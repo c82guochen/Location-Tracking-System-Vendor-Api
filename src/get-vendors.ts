@@ -7,6 +7,7 @@ import { dynamodbScanTable } from './aws';
 export const handler = async (
   event: APIGatewayEvent
 ): Promise<APIGatewayProxyResult> => {
+  // 该函数传递整个表的内容
   const tableName = process.env.AWS_VENDOR_TABLE_NAME ?? 'vendors';
 
   const pageLimit = event.queryStringParameters?.limit;
@@ -71,7 +72,9 @@ export const handler = async (
         Items: iterator.value.Items,
         count: iterator.value.Count,
         lastEvaluatedKey: iterator.value.LastEvaluatedKey
-          ? unmarshall(iterator.value.LastEvaluatedKey)
+          ? //   ? unmarshall(iterator.value.LastEvaluatedKey)
+          // 所以unmarshall为什么不能再docker上使用？？？？？？？？？？？ ？？？？
+            iterator.value.LastEvaluatedKey
           : null,
       }),
     };

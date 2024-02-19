@@ -75,3 +75,5 @@ RUN tsc
 RUN mkdir -p ${FUNCTION_DIR}
 
 CMD ["build/get-vendors.handler"]
+# docker run -v $HOME/.aws:/root/.aws:ro -e AWS_ACCESS_KEY_ID -e AWS_CA_BUNDLE -e AWS_CLI_FILE_ENCODING -e AWS_CONFIG_FILE -e AWS_DEFAULT_OUTPUT -e AWS_DEFAULT_REGION -e AWS_PAGER -e AWS_PROFILE -e AWS_ROLE_SESSION_NAME -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN -e AWS_SHARED_CREDENTIALS_FILE -e AWS_STS_REGIONAL_ENDPOINTS -p 9003:8080 getvendors:latest
+# curl -XPOST "http://localhost:9003/2015-03-31/functions/function/invocations" -d "{}"
