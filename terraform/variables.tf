@@ -46,7 +46,7 @@ variable "websocket_table_name" {
 variable "sqs_queue_name" {
   type        = string
   description = "Queue name"
-  default     = "vender-twitter-queue"
+  default     = "vendor-twitter-queue"
 }
 
 variable "api_gateway_stage_name" {
