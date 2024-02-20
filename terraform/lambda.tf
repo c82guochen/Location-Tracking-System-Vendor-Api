@@ -58,7 +58,7 @@ resource "aws_lambda_function" "sendvendor" {
         AWS_TABLE_NAME = "${var.websocket_table_name}"
         AWS_SQS_URL = "https://sqs.us-east-1.amazonaws.com/656203730697/vendor-twitter-queue"
         # 因为需要在web socket里broadcast，所以需要web socket url
-        # AWS_WEBSOCKET_URL = 
+        AWS_WEBSOCKET_URL = "${aws_apigatewayv2_api.websocket_cg.api_endpoint}/${var.api_gateway_stage_name}"
     }
   }
 }
