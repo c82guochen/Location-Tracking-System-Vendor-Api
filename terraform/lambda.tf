@@ -1,6 +1,6 @@
 # Connect
 resource "aws_lambda_function" "connect" {
-  # 注意：泽丽配置的是名为connect的docker image
+  # 注意：配置的是名为connect的docker image
   function_name = "${var.app_name}-connect"
   role = aws_iam_role.lambda_main.arn
   # 这里的url是指在docker存到ecr中之后的image url（image_tag是被build出来的）
